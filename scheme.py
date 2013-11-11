@@ -217,7 +217,8 @@ def do_define_form(vals, env):
     target = vals[0]
     if scheme_symbolp(target):
         check_form(vals, 2, 2)
-        # Were we supposed to use method "define"? (superfluous??)
+        # Were we supposed to use method "define"?
+        # It seemed a little superfluous
         env.bindings[target] = scheme_eval(vals[1], env)
         return target
     elif isinstance(target, Pair):
@@ -299,11 +300,14 @@ def do_cond_form(vals, env):
 def do_begin_form(vals, env):
     """Evaluate begin form with parameters VALS in environment ENV."""
     check_form(vals, 1)
-    "*** YOUR CODE HERE ***"
+    for i in range(len(vals)-1):
+        scheme_eval(vals[i], env)
+    return scheme_eval(vals[len(vals)-1], env)
+
 
 LOGIC_FORMS = {
         "and": do_and_form,
-        "or": do_or_form,
+        "or": do_or_form,   
         "if": do_if_form,
         "cond": do_cond_form,
         "begin": do_begin_form,
