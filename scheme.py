@@ -133,7 +133,7 @@ class Frame:
         few arguments are given.
 
         >>> env = create_global_frame()
-        >>> formals, vals = read_line(  "(a b c)"), read_line("(1 2 3)")
+        >>> formals, vals = read_line("(a b c)"), read_line("(1 2 3)")
         >>> env.make_call_frame(formals, vals)
         <{a: 1, b: 2, c: 3} -> <Global Frame>>
         """
