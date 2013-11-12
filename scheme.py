@@ -133,12 +133,16 @@ class Frame:
         few arguments are given.
 
         >>> env = create_global_frame()
-        >>> formals, vals = read_line("(a b c)"), read_line("(1 2 3)")
+        >>> formals, vals = read_line(  "(a b c)"), read_line("(1 2 3)")
         >>> env.make_call_frame(formals, vals)
         <{a: 1, b: 2, c: 3} -> <Global Frame>>
         """
         frame = Frame(self)
-        "*** YOUR CODE HERE ***"
+        if len(vals) != len(formals):
+            raise SchemeError()
+        
+        for i in range(len(formals)):
+            frame.bindings[formals[i]] = vals[i]
         return frame
 
     def define(self, sym, val):
@@ -200,9 +204,21 @@ class MuProcedure:
 def do_lambda_form(vals, env):
     """Evaluate a lambda form with parameters VALS in environment ENV."""
     check_form(vals, 2)
-    formals = vals[0]
+    formals = vals[0]    
     check_formals(formals)
-    "*** YOUR CODE HERE ***"
+    # DORIS:
+    ### Tried doing this for the sake of testing something else, eveyrthing
+    ### below this you can alter/delete at your own discretion
+
+    # Single-expression body - works
+    if len(vals) == 2:
+        body = vals[1]
+    # Multi-expression body - doesn't work
+    else:
+        vals = vals.second
+        body = do_begin_form(vals, env) # The problem is here
+    return LambdaProcedure(formals, body, env)
+
 
 def do_mu_form(vals):
     """Evaluate a mu form with parameters VALS."""
