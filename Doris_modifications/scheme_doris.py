@@ -46,6 +46,7 @@ def scheme_eval(expr, env):
         return do_mu_form(rest)
     elif first == "define":
         return do_define_form(rest, env)
+        
     elif first == "quote":
         #print ("calling do_quote")
         return do_quote_form(rest)
@@ -238,10 +239,23 @@ def do_define_form(vals, env):
 
 def do_quote_form(vals):
     """Evaluate a quote form with parameters VALS."""
+    """
+    scm> 'hello
+    hello
+    scm> '(1 . 2)
+    (1 . 2)
+    scm> '(1 (2 three . (4 . 5)))
+    (1 (2 three 4 . 5))
+    scm> (car '(a b))
+    a
+    scm> (eval (cons 'car '('(1 2))))
+    1
+    """
     check_form(vals, 1, 1)
     "*** YOUR CODE HERE ***"
     #return str(vals).strip('\'')
     print (vals[0])
+
 
 def do_let_form(vals, env):
     """Evaluate a let form with parameters VALS in environment ENV."""
@@ -312,7 +326,11 @@ def do_begin_form(vals, env):
     """Evaluate begin form with parameters VALS in environment ENV."""
     check_form(vals, 1)
     "*** YOUR CODE HERE ***"
-
+    end = len(vals) - 1
+    for expr in vals:
+        if expr == vals[end]:
+            return expr
+        scheme_eval(expr, env)
 LOGIC_FORMS = {
         "and": do_and_form,
         "or": do_or_form,

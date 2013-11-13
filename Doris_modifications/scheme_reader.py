@@ -182,6 +182,9 @@ def read_tail(src):
             if src.current()!=")":
                 #Checks if it is the end of the list ) ,if not that means there is more than one element
                 raise SyntaxError("Expected one element after .")
+            else:
+                src.pop()
+                return val
             return val
         first = scheme_read(src)
         rest = read_tail(src)
