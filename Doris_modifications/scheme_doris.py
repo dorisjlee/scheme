@@ -14,8 +14,10 @@ def scheme_eval(expr, env):
     """Evaluate Scheme expression EXPR in environment ENV.
 
     >>> expr = read_line("(+ 2 2)")
+    expr=read_line("'(1 (2 three . (4 . 5))")
     >>> expr
     Pair('+', Pair(2, Pair(2, nil)))
+    >>> scheme_eval(Pair("quote", Pair(2,  nil)),create_global_frame())
     >>> scheme_eval(expr, create_global_frame())
     4
     """
@@ -31,6 +33,7 @@ def scheme_eval(expr, env):
     # All non-atomic expressions are lists.
     if not scheme_listp(expr):
         raise SchemeError("malformed list: {0}".format(str(expr)))
+    
     first, rest = expr.first, expr.second
 
     # Evaluate Combinations
@@ -44,6 +47,7 @@ def scheme_eval(expr, env):
     elif first == "define":
         return do_define_form(rest, env)
     elif first == "quote":
+        #print ("calling do_quote")
         return do_quote_form(rest)
     elif first == "let":
         expr, env = do_let_form(rest, env)
@@ -66,6 +70,9 @@ def scheme_apply(procedure, args, env):
         raise SchemeError("Cannot call {0}".format(str(procedure)))
 
 def apply_primitive(procedure, args, env):
+    # procedure - PrimitiveProcedure instance
+    # args - a Scheme list of argument values
+    # env- the current environment. 
     """Apply PrimitiveProcedure PROCEDURE to a Scheme list of ARGS in ENV.
 
     >>> env = create_global_frame()
@@ -73,24 +80,27 @@ def apply_primitive(procedure, args, env):
     >>> twos = Pair(2, Pair(2, nil))
     >>> apply_primitive(plus, twos, env)
     4
-    """
-    # Converting the Scheme list to a Python list
-    pylist = []
-    while args != nil:
-        pylist.append(args.first)
-        args = args.second
-    
-    # Adding the current environment as the last argument if it's used
-    if procedure.use_env:
-        pylist.append(env)
 
-    # Calling the procedure on the arguments
+    """
+    "*** YOUR CODE HERE ***"
+    #defining a helper function to convert args(in scheme) to a python list
+    def scm_to_py(lst):
+        if lst == nil:
+            return []
+        for ele in lst:
+            return [lst.first]+scm_to_py(lst.second)
+    py_args=scm_to_py(args)
+    #Add the current environment env as the last argument.
+    if procedure.use_env == True:
+        py_args.append(env)
+    #Call procedure.fn on those arguments (hint: use * notation).
+    #If calling the function results in a TypeError exception being thrown, then raise a SchemeError instead.
     try:
-        return procedure.fn(*pylist)
+        return procedure.fn(*py_args)
     except TypeError:
         raise SchemeError()
 
-
+    
 ################
 # Environments #
 ################
@@ -112,13 +122,15 @@ class Frame:
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL.  Errors if SYMBOL is not found."""
+        "*** YOUR CODE HERE ***"
+        #Return the value of a symbol in self.bindings if it exists.
         if symbol in self.bindings:
-            return self.bindings[symbol]
-        if self.parent != None:
-            return lookup(self.parent, symbol)
-        raise SchemeError("unknown identifier: {0}".format(str(symbol)))
-
-
+            return self.bindings[symbol] #access the values in dictionary
+        if self.parent!=None:
+            return lookup(self.parent,symbol) #lookup symbol in parent frame
+        #Error is symbol not found in frame nor parent's frame
+        else:
+            raise SchemeError("unknown identifier: {0}".format(str(symbol)))
     def global_frame(self):
         """The global environment at the root of the parent chain."""
         e = self
@@ -138,11 +150,7 @@ class Frame:
         <{a: 1, b: 2, c: 3} -> <Global Frame>>
         """
         frame = Frame(self)
-        if len(vals) != len(formals):
-            raise SchemeError()
-        
-        for i in range(len(formals)):
-            frame.bindings[formals[i]] = vals[i]
+        "*** YOUR CODE HERE ***"
         return frame
 
     def define(self, sym, val):
@@ -204,21 +212,9 @@ class MuProcedure:
 def do_lambda_form(vals, env):
     """Evaluate a lambda form with parameters VALS in environment ENV."""
     check_form(vals, 2)
-    formals = vals[0]    
+    formals = vals[0]
     check_formals(formals)
-    # DORIS:
-    ### Tried doing this for the sake of testing something else, eveyrthing
-    ### below this you can alter/delete at your own discretion
-
-    # Single-expression body - works
-    if len(vals) == 2:
-        body = vals[1]
-    # Multi-expression body - doesn't work
-    else:
-        vals = vals.second
-        body = do_begin_form(vals, env) # The problem is here
-    return LambdaProcedure(formals, body, env)
-
+    "*** YOUR CODE HERE ***"
 
 def do_mu_form(vals):
     """Evaluate a mu form with parameters VALS."""
@@ -233,18 +229,18 @@ def do_define_form(vals, env):
     target = vals[0]
     if scheme_symbolp(target):
         check_form(vals, 2, 2)
-        # Were we supposed to use method "define"?
-        # It seemed a little superfluous
-        env.bindings[target] = scheme_eval(vals[1], env)
-        return target
+        "*** YOUR CODE HERE ***"
     elif isinstance(target, Pair):
         "*** YOUR CODE HERE ***"
+        return str(vals)
     else:
         raise SchemeError("bad argument to define")
 
 def do_quote_form(vals):
     """Evaluate a quote form with parameters VALS."""
     check_form(vals, 1, 1)
+    "*** YOUR CODE HERE ***"
+    #return str(vals).strip('\'')
     print (vals[0])
 
 def do_let_form(vals, env):
@@ -315,14 +311,11 @@ def do_cond_form(vals, env):
 def do_begin_form(vals, env):
     """Evaluate begin form with parameters VALS in environment ENV."""
     check_form(vals, 1)
-    for i in range(len(vals)-1):
-        scheme_eval(vals[i], env)
-    return scheme_eval(vals[len(vals)-1], env)
-
+    "*** YOUR CODE HERE ***"
 
 LOGIC_FORMS = {
         "and": do_and_form,
-        "or": do_or_form,   
+        "or": do_or_form,
         "if": do_if_form,
         "cond": do_cond_form,
         "begin": do_begin_form,
