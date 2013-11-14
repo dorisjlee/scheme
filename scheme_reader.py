@@ -171,6 +171,9 @@ def read_tail(src):
             val = scheme_read(src)
             if src.current() != ")":
                 raise SyntaxError("Expected one element after .")
+            else:
+                src.pop()
+                return val
             return val
         first = scheme_read(src)
         rest = read_tail(src)

@@ -12,12 +12,9 @@ from ucb import main, trace
 
 def scheme_eval(expr, env):
     """Evaluate Scheme expression EXPR in environment ENV.
-
     >>> expr = read_line("(+ 2 2)")
-    expr=read_line("'(1 (2 three . (4 . 5))")
     >>> expr
     Pair('+', Pair(2, Pair(2, nil)))
-    >>> scheme_eval(Pair("quote", Pair(2,  nil)),create_global_frame())
     >>> scheme_eval(expr, create_global_frame())
     4
     """
@@ -46,7 +43,7 @@ def scheme_eval(expr, env):
         return do_mu_form(rest)
     elif first == "define":
         return do_define_form(rest, env)
-        
+
     elif first == "quote":
         #print ("calling do_quote")
         return do_quote_form(rest)
