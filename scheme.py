@@ -274,7 +274,8 @@ def do_let_form(vals, env):
 
     # Add a frame containing bindings
     names, values = nil, nil
-    "*** YOUR CODE HERE ***"
+    fr = Frame(env)
+    
     new_env = env.make_call_frame(names, values)
 
     # Evaluate all but the last expression after bindings, and return the last
@@ -333,7 +334,12 @@ def do_cond_form(vals, env):
         else:
             test = scheme_eval(clause.first, env)
         if scheme_true(test):
-            "*** YOUR CODE HERE ***"
+            if len(clause.second) > 1:
+                return do_begin_form(clause.second, env)
+            elif len(clause.second) != 0:
+                return clause.second[0]
+            else:
+                return clause.first
     return okay
 
 def do_begin_form(vals, env):
