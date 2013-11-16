@@ -59,11 +59,14 @@ def scheme_apply(procedure, args, env):
     if isinstance(procedure, PrimitiveProcedure):
         return apply_primitive(procedure, args, env)
     elif isinstance(procedure, LambdaProcedure):
-        "*** YOUR CODE HERE ***"
+        fr = Frame(env)
+        "*** FINISH ***"
     elif isinstance(procedure, MuProcedure):
         "*** YOUR CODE HERE ***"
     else:
         raise SchemeError("Cannot call {0}".format(str(procedure)))
+
+
 
 def apply_primitive(procedure, args, env):
     """Apply PrimitiveProcedure PROCEDURE to a Scheme list of ARGS in ENV.
@@ -209,10 +212,9 @@ def do_lambda_form(vals, env):
     # Single action
     body = vals[1]
     # Multiple actions
-    if len(vals) != 2:
+    if len(vals) > 2:
         body = Pair("begin", vals.second)
     return LambdaProcedure(formals, body, env)
-
 
 def do_mu_form(vals):
     """Evaluate a mu form with parameters VALS."""
@@ -227,19 +229,22 @@ def do_define_form(vals, env):
     target = vals[0]
     if scheme_symbolp(target):
         check_form(vals, 2, 2)
-        # Were we supposed to use method "define"?
-        # It seemed a little superfluous
-        env.bindings[target] = scheme_eval(vals[1], env)
+        env.define(target, scheme_eval(vals[1], env))
         return target
     elif isinstance(target, Pair):
-        "*** YOUR CODE HERE ***"
+        name = target.first
+        target = target.second
+        lamb = do_lambda_form(vals, env)
+        env.define(name, lamb)
+        return lamb
     else:
         raise SchemeError("bad argument to define")
+
 
 def do_quote_form(vals):
     """Evaluate a quote form with parameters VALS."""
     check_form(vals, 1, 1)
-    print (vals[0])
+    return vals[0]
 
 def do_let_form(vals, env):
     """Evaluate a let form with parameters VALS in environment ENV."""
@@ -311,7 +316,7 @@ def do_begin_form(vals, env):
     check_form(vals, 1)
     for i in range(len(vals)-1):
         scheme_eval(vals[i], env)
-    return scheme_eval(vals[len(vals)-1], env)
+    return vals[len(vals)-1]
 
 
 LOGIC_FORMS = {
