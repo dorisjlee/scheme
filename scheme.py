@@ -66,6 +66,14 @@ def scheme_apply(procedure, args, env):
     else:
         raise SchemeError("Cannot call {0}".format(str(procedure)))
 
+    # def lookup(self, symbol):
+    #     """Return the value bound to SYMBOL.  Errors if SYMBOL is not found."""
+    #     if symbol in self.bindings:
+    #         return self.bindings[symbol]
+    #     if self.parent != None:
+    #         return lookup(self.parent, symbol)
+    #     raise SchemeError("unknown identifier: {0}".format(str(symbol)))
+
 
 
 def apply_primitive(procedure, args, env):
@@ -283,7 +291,14 @@ def do_let_form(vals, env):
 def do_if_form(vals, env):
     """Evaluate if form with parameters VALS in environment ENV."""
     check_form(vals, 2, 3)
-    "*** YOUR CODE HERE ***"
+    try:
+        if scheme_true(scheme_eval(vals[0], env)):
+            return vals[1]
+        elif len(vals) > 2:
+            return vals[2]
+    except TypeError:
+        return 
+    return okay
 
 def do_and_form(vals, env):
     """Evaluate short-circuited and with parameters VALS in environment ENV."""
