@@ -209,8 +209,10 @@ def do_lambda_form(vals, env):
     check_form(vals, 2)
     formals = vals[0]    
     check_formals(formals)
+    
     # Single action
     body = vals[1]
+    
     # Multiple actions
     if len(vals) > 2:
         body = Pair("begin", vals.second)
@@ -232,9 +234,17 @@ def do_define_form(vals, env):
         env.define(target, scheme_eval(vals[1], env))
         return target
     elif isinstance(target, Pair):
-        name = target.first
-        target = target.second
-        lamb = do_lambda_form(vals, env)
+        # Symbol to be defined
+        name = target.first 
+
+        # Ensures the symbol is valid
+        if type(name) is not str: 
+            raise SchemeError()
+        # Formal parameters
+        vals.first = target.second
+
+        # Actual lambda expression
+        lamb = do_lambda_form(vals, env) 
         env.define(name, lamb)
         return lamb
     else:
