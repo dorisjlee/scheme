@@ -126,7 +126,7 @@ class Frame:
         if symbol in self.bindings:
             return self.bindings[symbol]
         if self.parent != None:
-            return lookup(self.parent, symbol)
+            return Frame.lookup(self.parent, symbol)
         raise SchemeError("unknown identifier: {0}".format(str(symbol)))
 
 
@@ -247,7 +247,7 @@ def do_define_form(vals, env):
 
         # Ensures the symbol is valid
         if type(name) is not str: 
-            raise SchemeError()
+            raise SchemeError("bad argument to define")
         # Formal parameters
         vals.first = target.second
 
@@ -271,12 +271,13 @@ def do_let_form(vals, env):
     exprs = vals.second
     if not scheme_listp(bindings):
         raise SchemeError("bad bindings list in let form")
-
+        
     # Add a frame containing bindings
     names, values = nil, nil
-    fr = Frame(env)
-    
     new_env = env.make_call_frame(names, values)
+
+    for elem in vals.first:
+        new_env.bindings[elem[0]] = scheme_eval(elem[1], env)
 
     # Evaluate all but the last expression after bindings, and return the last
     last = len(exprs)-1
