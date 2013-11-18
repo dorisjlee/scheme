@@ -149,6 +149,13 @@ class Frame:
         """
         frame = Frame(self)
         "*** YOUR CODE HERE ***"
+        #Raises a SchemeError if make_call_frame receives a different number of formal parameters and arguments        
+        #if len(formals)==0 or len (formals)!= len(vals):
+        if len (formals)!= len(vals):
+            raise SchemeError()
+        #Binds formal parameters to their corresponding argument values.
+        for i in range(len(formals)):
+            self.bindings[formals[i]]=vals[i]
         return frame
 
     def define(self, sym, val):
@@ -213,6 +220,12 @@ def do_lambda_form(vals, env):
     formals = vals[0]
     check_formals(formals)
     "*** YOUR CODE HERE ***"
+    # single expression
+    body = vals[1]
+    # multiple expression
+    if len(vals) >=3:
+        body= Pair("begin" , vals.second)
+    return LambdaProcedure(formals, body, env)
 
 def do_mu_form(vals):
     """Evaluate a mu form with parameters VALS."""
@@ -227,13 +240,24 @@ def do_define_form(vals, env):
     target = vals[0]
     if scheme_symbolp(target):
         check_form(vals, 2, 2)
-        "*** YOUR CODE HERE ***"
+        env.define(target, scheme_eval(vals[1], env))
+        return target
     elif isinstance(target, Pair):
-        "*** YOUR CODE HERE ***"
-        return str(vals)
+        # Symbol to be defined
+        name = target.first 
+
+        # Ensures the symbol is valid
+        if type(name) is not str: 
+            raise SchemeError("bad argument to define")
+        # Formal parameters
+        vals.first = target.second
+
+        # Actual lambda expression
+        lamb = do_lambda_form(vals, env) 
+        env.define(name, lamb)
+        return lamb
     else:
         raise SchemeError("bad argument to define")
-
 def do_quote_form(vals):
     """Evaluate a quote form with parameters VALS."""
     """
