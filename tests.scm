@@ -6,7 +6,191 @@
 ;;;
 ;;; after the last test you wish to run.
 
-;;; *** Add more of your own here! ***
+;;; Q3 -------------------------
+
+(* 1 (+ 2 3 5))
+; expect 10
+
+(- 1)
+; expect -1
+
+(+ 1 (- 1))
+; expect 0
+
+(+ 1 (- 1 (+ 1)))
+; expect 1
+
+;;; Q4 and Q5 -------------------------
+
+(define x (* 2 2))
+; expect x
+x
+; expect 4
+
+(define area 55)
+; expect area
+(define lol 1)
+; expect lol
+(* area lol)
+; expect 55
+
+(define lst (list 1 2 3))
+; expect lst
+lst
+; expect (1 2 3)
+
+;;; Q6 -------------------------
+
+<<ADD TESTS>>
+
+;;; Q7 -------------------------
+
+(begin (+ 9 0) (+ 8 2))
+; expect 10
+
+(begin (display 15) (newline) (* 9 6))
+; expect 15
+;        54
+
+(begin (print 19) '(+ 0 3))
+; expect 19
+;        (+ 2 3)
+
+(begin (display 1) '(+ 5 6) (newline) (+ 1 3))
+; expect 1
+;        4
+
+(begin 30 'allo)
+; expect 'allo
+
+;;; Q8 -------------------------
+
+(lambda (m) (print m) (* m 12))
+; expect (lambda (m) (begin (print m) (* m 12)))
+
+(lambda (x y) (* x y))
+; expect (lambda (x y) (* x y))
+
+(lambda (f x) (print x) (print y) (* x f))
+; expect (lambda (f x) (begin (print x) (print y) (* x f)))
+
+(lambda () 2 5)
+; expect (lambda () (begin 2 5))
+
+(lambda (f) (lambda () (* f f)))
+; expect (lambda (f) (lambda () (* f f)))
+
+(define circumference (lambda (radius) (* 3.14 (* radius radius))))
+; expect circumference
+(circumference 1)
+; expect 3.14
+
+;;; Q9 -------------------------
+
+(define (f x) (* x 6))
+; expect f
+f
+; expect (lambda (x) (* x 6))
+
+(define (circumference radius) (* 3.14 (* radius radius)))
+; expect circumference
+(circumference 1)
+; expect 3.14
+
+(define (lol ()) 2)
+; expect lol
+lol
+; expect (lambda (()) 2)
+(lol ())
+; expect 2
+
+;;; Q10 -------------------------
+
+<<ADD TESTS>>
+
+;;; Q11 -------------------------
+
+<<ADD TESTS>>
+
+;;; Q12 -------------------------
+
+<<ADD TESTS>>
+
+;;; Q13 -------------------------
+
+(if (> 2 4) true)
+; expect okay
+
+(if false 1 2)
+; expect 2
+
+(if (= 4 2) (+ 1 2) (* 1 2))
+; expect 2
+
+(if (= 4 2) (+ 1 2) '(* 1 2))
+; expect (* 1 2)
+
+;;; Q14 -------------------------
+
+<<ADD TESTS>>
+
+;;; Q15 -------------------------
+
+(cond ((= 4 3) 'lolno)
+  ((> 4 1) 'yay!)
+  (else 'youdunmessedup))
+; expect 'yay!
+
+(cond ((= 4 0) 'incorrect)
+  ((= 5 5))
+  (else 'hashtagyolo))
+; expect True
+
+(cond ((= 0 0) 'here 12)
+  (else 'umwhat 0))
+; expect 12
+
+(cond (1))
+; expect 1
+
+(cond ((= 4 3))
+  ('coldtoes))
+; expect coldtoes
+
+;;; Q16 -------------------------
+
+(define x 'lol)
+; expect x
+(define y 'jk)
+; expect y
+(let ((x 42)
+      (y (+ 12 0)))
+      (list x y))
+; expect (42 12)
+(list x y)
+; expect (lol jk)
+
+(define x 'happy)
+; expect x
+(let ((x 'unhappy))
+    (list x))
+; expect (unhappy)
+(list x)
+; expect (happy)
+
+(let ((x 42)) x 1 x)
+; expect 42
+
+(let ((y 12)) 0 (+ 1 2) (* y 12))
+; expect 144
+
+(let ((x 12) (y 16)) (+ x y))
+; expect 28
+
+;;; Q17 -------------------------
+
+<<ADD TESTS>>
+
 
 ;;; These are examples from several sections of "The Structure
 ;;; and Interpretation of Computer Programs" by Abelson and Sussman.
