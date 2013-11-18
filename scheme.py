@@ -59,21 +59,13 @@ def scheme_apply(procedure, args, env):
     if isinstance(procedure, PrimitiveProcedure):
         return apply_primitive(procedure, args, env)
     elif isinstance(procedure, LambdaProcedure):
-        fr = Frame(env)
-        "*** FINISH ***"
+        fr = procedure.env.make_call_frame(procedure.formals, args)
+        return scheme_eval(procedure.body, fr)
     elif isinstance(procedure, MuProcedure):
-        "*** YOUR CODE HERE ***"
+        fr = env.make_call_frame(procedure.formals, args)
+        return scheme_eval(procedure.body, fr)
     else:
         raise SchemeError("Cannot call {0}".format(str(procedure)))
-
-    # def lookup(self, symbol):
-    #     """Return the value bound to SYMBOL.  Errors if SYMBOL is not found."""
-    #     if symbol in self.bindings:
-    #         return self.bindings[symbol]
-    #     if self.parent != None:
-    #         return lookup(self.parent, symbol)
-    #     raise SchemeError("unknown identifier: {0}".format(str(symbol)))
-
 
 
 def apply_primitive(procedure, args, env):
@@ -148,13 +140,13 @@ class Frame:
         >>> env.make_call_frame(formals, vals)
         <{a: 1, b: 2, c: 3} -> <Global Frame>>
         """
-        frame = Frame(self)
+        fr = Frame(self)
         if len(vals) != len(formals):
             raise SchemeError()
         
         for i in range(len(formals)):
-            frame.bindings[formals[i]] = vals[i]
-        return frame
+            fr.bindings[formals[i]] = vals[i]
+        return fr
 
     def define(self, sym, val):
         """Define Scheme symbol SYM to have value VAL in SELF."""
@@ -248,13 +240,14 @@ def do_define_form(vals, env):
         # Ensures the symbol is valid
         if type(name) is not str: 
             raise SchemeError("bad argument to define")
+        
         # Formal parameters
         vals.first = target.second
 
         # Actual lambda expression
         lamb = do_lambda_form(vals, env) 
         env.define(name, lamb)
-        return lamb
+        return name
     else:
         raise SchemeError("bad argument to define")
 
@@ -271,7 +264,7 @@ def do_let_form(vals, env):
     exprs = vals.second
     if not scheme_listp(bindings):
         raise SchemeError("bad bindings list in let form")
-        
+
     # Add a frame containing bindings
     names, values = nil, nil
     new_env = env.make_call_frame(names, values)
@@ -304,7 +297,14 @@ def do_if_form(vals, env):
 
 def do_and_form(vals, env):
     """Evaluate short-circuited and with parameters VALS in environment ENV."""
-    "*** YOUR CODE HERE ***"
+    last = True
+    while vals != nil:
+        if scheme_false(scheme_eval(vals.first, env)):
+            return False
+        if vals.second == nil:
+            last = vals.first
+        vals = vals.second
+    return last
 
 def quote(value):
     """Return a Scheme expression quoting the Scheme VALUE.
@@ -319,7 +319,11 @@ def quote(value):
 
 def do_or_form(vals, env):
     """Evaluate short-circuited or with parameters VALS in environment ENV."""
-    "*** YOUR CODE HERE ***"
+    while vals != nil:
+        if scheme_true(scheme_eval(vals.first, env)):
+            return scheme_eval(vals.first, env)
+        vals = vals.second
+    return False
 
 def do_cond_form(vals, env):
     """Evaluate cond form with parameters VALS in environment ENV."""
