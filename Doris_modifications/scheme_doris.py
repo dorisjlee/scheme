@@ -57,11 +57,21 @@ def scheme_eval(expr, env):
 
 
 def scheme_apply(procedure, args, env):
+
     """Apply Scheme PROCEDURE to argument values ARGS in environment ENV."""
     if isinstance(procedure, PrimitiveProcedure):
         return apply_primitive(procedure, args, env)
     elif isinstance(procedure, LambdaProcedure):
         "*** YOUR CODE HERE ***"
+        #Create a new Frame, with all formal parameters bound to their argument values.
+        #Evaluate the body of procedure in the environment represented by this new frame.
+        #Return the value of calling procedure.
+        #new_fr=Frame(env)
+        #new_fr.bindings=args
+        # make_call_frame returns a new frame with parent as self and bound formals to args
+        new_fr = procedure.env.make_call_frame(procedure.formals, args)
+        return scheme_eval(procedure.body, new_fr) 
+
     elif isinstance(procedure, MuProcedure):
         "*** YOUR CODE HERE ***"
     else:
@@ -125,7 +135,7 @@ class Frame:
         if symbol in self.bindings:
             return self.bindings[symbol] #access the values in dictionary
         if self.parent!=None:
-            return lookup(self.parent,symbol) #lookup symbol in parent frame
+            return Frame.lookup(self.parent,symbol) #lookup symbol in parent frame
         #Error is symbol not found in frame nor parent's frame
         else:
             raise SchemeError("unknown identifier: {0}".format(str(symbol)))
@@ -380,8 +390,39 @@ def check_formals(formals):
     is not a well-formed list of symbols or if any symbol is repeated.
 
     >>> check_formals(read_line("(a b c)"))
+    >>> check_formals(read_line("(a b b  c)"))
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "scheme_doris.py", line 402, in check_formals
+        raise SchemeError()
+    scheme_primitives.SchemeError
+
+
     """
     "*** YOUR CODE HERE ***"
+
+    #Raise a SchemeError if the list of formals is not a well-formed list of symbols 
+    #or if any symbol is repeated
+
+    #defining a helper function to convert args(in scheme) to a python list
+    def scm_to_py(lst):
+        if lst == nil:
+            return []
+        for ele in lst:
+            return [lst.first]+scm_to_py(lst.second)
+    # this is used in another question maybe I will define this as a global function 
+    # I wonder if proj allows that
+    py_formals=scm_to_py(formals)
+    for i in formals:
+        #check if well-formed list
+        #if  not (symbols? i):
+        if not scheme_symbolp(i):
+            raise SchemeError()
+        #check repeat
+        if py_formals.count (i) >1:
+            raise SchemeError()
+        
+
 
 ##################
 # Tail Recursion #
