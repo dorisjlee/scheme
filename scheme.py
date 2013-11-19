@@ -126,11 +126,14 @@ class Frame:
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL.  Errors if SYMBOL is not found."""
+        #if self.parent is None and symbol not in self.bindings::
+            #raise SchemeError("unknown identifier: {0}".format(str(symbol)))
         if symbol in self.bindings:
             return self.bindings[symbol]
         if self.parent != None:
             return Frame.lookup(self.parent, symbol)
         raise SchemeError("unknown identifier: {0}".format(str(symbol)))
+
 
 
     def global_frame(self):
@@ -336,8 +339,11 @@ def quote(value):
 def do_or_form(vals, env):
     """Evaluate short-circuited or with parameters VALS in environment ENV."""
     while vals != nil:
+        #if val.first== "or":
+            #return 
+#If any evaluates to a true value, then quote that value and return it
         if scheme_true(scheme_eval(vals.first, env)):
-            return scheme_eval(vals.first, env)
+            return quote(scheme_eval(vals.first, env))
         vals = vals.second
     return False
 

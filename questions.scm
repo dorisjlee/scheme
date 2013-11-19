@@ -1,4 +1,4 @@
-#!scheme
+; #!scheme
 ; Some utility functions that you may find useful.
 (define nil '())
 (define (map proc items)
@@ -63,7 +63,7 @@
 (merge greater-list '((3 2 1) (1 1) (0)) '((4 0) (3 2 0) (3 2) (1)))
 ; expect ((4 0) (3 2 1) (3 2 0) (3 2) (1 1) (1) (0))
 
-
+(define (flatten x) (x))
 ; Problem 19
 
 ;; A list of all ways to partition TOTAL, where  each partition must
