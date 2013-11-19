@@ -240,6 +240,26 @@ scm> (cond ((= 4 3))
 
 
 
+(define addx (mu (x) (+ x y)))
+; expect addx
+(define add2xy (lambda (x y) (addx (+ x x))))
+; expect add2xy
+(add2xy 3 7)
+; expect 13
+
+(define x 5)
+; expect x
+(define lamb2 (lambda (y) (+ x y)))
+; expect lamb2
+(define moose2 (mu (y) (+ x y)))
+; expect moose2
+(define (test f y)
+(define x 10)(f y))
+; expect test
+(test lamb2 2)         ; x becomes 5 in the lambda expression
+; expect 7
+(test moose2 2)       ; x becomes 10 in the mu expression
+; expect 12
 
  
 

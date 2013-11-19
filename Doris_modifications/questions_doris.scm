@@ -22,9 +22,32 @@
 
 ;; Merge two lists LIST1 and LIST2 according to COMP and return
 ;; the merged lists.
-(define (merge comp list1 list2)
+     ; if (comp car(list1) car(list2)):
+      ;  return car(list1) + car(list2)+ (merge comp cdr(list1) cdr (list2))
+      ;else:
+       ; return car(list2) + car(list1)+ (merge comp cdr(list1) cdr (list2))
     ; *** YOUR CODE HERE ***
-    nil)
+;    if len(list1)==1 and len(list2)==1:
+;      return (comp list1 list2)
+;    if comp == < :
+;(define (merge comp list1 list2)
+
+;    (if (comp (car list1) (car list2)  )
+        ;(list (car list1) (car list2) (merge comp (cdr list1) (cdr list2))) 
+
+       ; (list (car list2) (car list1) (merge comp (cdr list1) (cdr list2)))
+      ;))
+;Dont use list to combine because recursive creates list within list, therefor jsut cons 
+;scm> (list 3 (list 2 (list 3)))
+;(3 (2 (3)))
+
+(define (merge comp list1 list2)
+    (cond 
+        ((null? list1) list2)
+        ((null? list2) list1)
+        ((comp (car list1) (car list2)) (cons (car list1) (merge comp (cdr list1) list2)))
+        (else (cons (car list2) (merge comp (cdr list2) list1)))
+    ))
 
 (merge < '(1 5 7 9) '(4 8 10))
 ; expect (1 4 5 7 8 9 10)
