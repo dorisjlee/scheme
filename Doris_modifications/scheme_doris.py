@@ -73,8 +73,12 @@ def scheme_apply(procedure, args, env):
         return scheme_eval(procedure.body, new_fr) 
 
     elif isinstance(procedure, MuProcedure):
-        "*** YOUR CODE HERE ***"
-    else:
+        "*** YOUR CODE HERE ***"        
+        #make_callframe returns  a new local frame whose parent is self (in this case env)
+        #unlike the lambda , the environment of the new frame is a the parent not the procedure's environemnt (the environment in which procedure is defined)        
+        # can not jsut use env as argument for scheme_eval because the formals and args is not binded 
+        frame = env.make_call_frame(procedure.formals,args)
+        return scheme_eval(procedure.body,frame)    else:
         raise SchemeError("Cannot call {0}".format(str(procedure)))
 
 def apply_primitive(procedure, args, env):
@@ -243,7 +247,12 @@ def do_mu_form(vals):
     formals = vals[0]
     check_formals(formals)
     "*** YOUR CODE HERE ***"
-
+    # single expression
+    body = vals[1]
+    # multiple expression
+    if len(vals) >=3:
+        body= Pair("begin" , vals.second)
+    return MuProcedure(formals, body)
 def do_define_form(vals, env):
     """Evaluate a define form with parameters VALS in environment ENV."""
     check_form(vals, 2)
@@ -300,7 +309,9 @@ def do_let_form(vals, env):
     names, values = nil, nil
     "*** YOUR CODE HERE ***"
     new_env = env.make_call_frame(names, values)
-
+    # add necessary bindings
+    for i in vals.first:
+        new_env.bindings[i[0]]=scheme_eval(i[1],env) #evaluate in new environment
     # Evaluate all but the last expression after bindings, and return the last
     last = len(exprs)-1
     for i in range(0, last):
@@ -315,11 +326,28 @@ def do_let_form(vals, env):
 def do_if_form(vals, env):
     """Evaluate if form with parameters VALS in environment ENV."""
     check_form(vals, 2, 3)
-    "*** YOUR CODE HERE ***"
+    try:
+        if scheme_true(scheme_eval(vals[0], env)):
+            return vals[1]
+        elif len(vals) > 2:
+            return vals[2]
+    except TypeError:
+        return 
+    return okay
+
 
 def do_and_form(vals, env):
     """Evaluate short-circuited and with parameters VALS in environment ENV."""
     "*** YOUR CODE HERE ***"
+    # if any is false then false is returned, true (last) is only returned if you reach the end, (i.e your next item is nil)
+    last = True
+    while vals != nil:
+        if scheme_false(scheme_eval(vals.first, env)):
+            return False
+        if vals.second == nil:
+            last = vals.first
+        vals = vals.second
+    return last    
 
 def quote(value):
     """Return a Scheme expression quoting the Scheme VALUE.
@@ -335,7 +363,11 @@ def quote(value):
 def do_or_form(vals, env):
     """Evaluate short-circuited or with parameters VALS in environment ENV."""
     "*** YOUR CODE HERE ***"
-
+    while vals != nil:
+        if scheme_true(scheme_eval(vals.first, env)):
+            return scheme_eval(vals.first, env) #return the scheme syntaxed True "#t"
+        vals = vals.second
+    return False # if everything is false then false
 def do_cond_form(vals, env):
     """Evaluate cond form with parameters VALS in environment ENV."""
     num_clauses = len(vals)
@@ -351,6 +383,12 @@ def do_cond_form(vals, env):
             test = scheme_eval(clause.first, env)
         if scheme_true(test):
             "*** YOUR CODE HERE ***"
+            if len(clause.second) > 1:
+                return do_begin_form(clause.second, env)
+            elif len(clause.second) != 0:
+                return clause.second[0]
+            else:
+                return clause.first
     return okay
 
 def do_begin_form(vals, env):

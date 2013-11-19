@@ -71,6 +71,11 @@ def scheme_apply(procedure, args, env):
 
     elif isinstance(procedure, MuProcedure):
         "*** YOUR CODE HERE ***"
+        #make_callframe returns  a new local frame whose parent is self (in this case env)
+        #unlike the lambda , the environment of the new frame is a the parent not the procedure's environemnt (the environment in which procedure is defined)        
+        # can not jsut use env as argument for scheme_eval because the formals and args is not binded 
+        frame = env.make_call_frame(procedure.formals,args)
+        return scheme_eval(procedure.body,frame)
     else:
         raise SchemeError("Cannot call {0}".format(str(procedure)))
 
@@ -149,7 +154,6 @@ class Frame:
         fr = Frame(self)
         if len(vals) != len(formals):
             raise SchemeError()
-        
         for i in range(len(formals)):
             fr.bindings[formals[i]] = vals[i]
         return fr
@@ -230,6 +234,12 @@ def do_mu_form(vals):
     formals = vals[0]
     check_formals(formals)
     "*** YOUR CODE HERE ***"
+    # single expression
+    body = vals[1]
+    # multiple expression
+    if len(vals) >=3:
+        body= Pair("begin" , vals.second)
+    return MuProcedure(formals, body)
 
 def do_define_form(vals, env):
     """Evaluate a define form with parameters VALS in environment ENV."""

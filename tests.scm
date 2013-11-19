@@ -157,6 +157,11 @@ lol
   ('coldtoes))
 ; expect coldtoes
 
+;;;Case where both is false (Why does this return 3?)
+scm> (cond ((= 4 3))
+                (= 5 3))
+; expect 3
+
 ;;; Q16 -------------------------
 
 (define x 'lol)
@@ -187,10 +192,58 @@ lol
 (let ((x 12) (y 16)) (+ x y))
 ; expect 28
 
+( let ((x (list 1 2)) (y (list 2 3 ))) (cons x y ))
+; expect ((1 2) 2 3)
+
+( let ((x (list 1 2)) (y (list 2 3 ))) (append x y ))
+; expect (1 2 2 3)
+
+
 ;;; Q17 -------------------------
+(define f (mu (x) (+ x y)))
+; expect f
+(define g (lambda (x y) (f (+ x x))))
+; expect g
+(g 3 7)
+; expect 13
+
+;;;;;;;;;;;;;Because mu is not defined on stk, check the expected value of these test for me;;;;;;;;;;;;;;;;;;
+(define moose (mu () x))
+;expect moose
+(define (test3 f x) (f))
+; expect test3 
+(define x 3)
+; expect x
+(test3 moose 2)
+; expect 2
+(define lamb (lambda () x))
+; expect lamb
+(test3 lamb 2)
+; expect 3
+
+
+
+(define moo (mu (x) (* x pi) ))
+; expect moo
+(define pi 3.14) 
+; expect pi
+(define test  (lambda(r) (* r pi )))
+; expect test 
+(test 1)
+; expect 3.14
+(test 2)
+; expect 6.28
+(define test2  (lambda(r) (moo (* r pi ))))
+; expect test2
+(test2 1)
+; expect 9.8596
+
+
+
+
+ 
 
 <<ADD TESTS>>
-
 
 ;;; These are examples from several sections of "The Structure
 ;;; and Interpretation of Computer Programs" by Abelson and Sussman.
