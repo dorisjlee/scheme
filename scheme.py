@@ -229,6 +229,7 @@ def do_lambda_form(vals, env):
     # Multiple actions
     if len(vals) > 2:
         body = Pair("begin", vals.second)
+
     return LambdaProcedure(formals, body, env)
 
 def do_mu_form(vals):
@@ -255,14 +256,14 @@ def do_define_form(vals, env):
     elif isinstance(target, Pair):
         # Symbol to be defined
         name = target.first 
-
+       
         # Ensures the symbol is valid
         if type(name) is not str: 
             raise SchemeError("bad argument to define")
         
         # Formal parameters
         vals.first = target.second
-
+       
         # Actual lambda expression
         lamb = do_lambda_form(vals, env) 
         env.define(name, lamb)

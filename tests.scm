@@ -2,7 +2,7 @@
 ;;;
 ;;; In order to run only a prefix of these examples, add the line
 ;;;
-;;; (exit)
+
 ;;;
 ;;; after the last test you wish to run.
 
@@ -41,7 +41,19 @@ lst
 
 ;;; Q6 -------------------------
 
-<<ADD TESTS>>
+'THIS_IS_A_QUOTE
+; expect this_is_a_quote
+'(1 . 2)
+; expect (1 . 2)
+
+(cdr '(1 (2 three . (4 . 5))))
+; expect ((2 three 4 . 5)) 
+
+(car '(a b))
+; expect a
+
+(eval (cons 'car '('( first second))))
+; expect first
 
 ;;; Q7 -------------------------
 
@@ -49,19 +61,16 @@ lst
 ; expect 10
 
 (begin (display 15) (newline) (* 9 6))
-; expect 15
-;        54
+; expect 54
 
 (begin (print 19) '(+ 0 3))
-; expect 19
-;        (+ 2 3)
+; expect (+ 0 3)
 
 (begin (display 1) '(+ 5 6) (newline) (+ 1 3))
-; expect 1
-;        4
+; expect 4
 
 (begin 30 'allo)
-; expect 'allo
+; expect allo
 
 ;;; Q8 -------------------------
 
@@ -84,6 +93,13 @@ lst
 ; expect circumference
 (circumference 1)
 ; expect 3.14
+(define x 10)
+; expect x
+(lambda (x) (*x x) (15))
+; expect (lambda (x) (begin (*x x) (15)))
+((lambda (x) (* x x)) 15)
+; expect 225
+
 
 ;;; Q9 -------------------------
 
@@ -92,29 +108,34 @@ lst
 f
 ; expect (lambda (x) (* x 6))
 
+( define '(f) x)
+; expect Error: 
+
+
 (define (circumference radius) (* 3.14 (* radius radius)))
 ; expect circumference
 (circumference 1)
 ; expect 3.14
 
-(define (lol ()) 2)
+
+(define (lol) 2)
 ; expect lol
 lol
-; expect (lambda (()) 2)
-(lol ())
+; expect (lambda () 2)
+(lol )
 ; expect 2
 
 ;;; Q10 -------------------------
 
-<<ADD TESTS>>
+;<<ADD TESTS>>
 
 ;;; Q11 -------------------------
 
-<<ADD TESTS>>
+;<<ADD TESTS>>
 
 ;;; Q12 -------------------------
 
-<<ADD TESTS>>
+;<<ADD TESTS>>
 
 ;;; Q13 -------------------------
 
@@ -131,15 +152,24 @@ lol
 ; expect (* 1 2)
 
 ;;; Q14 -------------------------
-
-<<ADD TESTS>>
-
+(and)
+; expect True
+(or)       
+; expect False
+(and 4 5 6)
+; expect 6   
+(or 5 2 1)
+; expect 5 
+(and #t #f 42 (/ 1 0))
+; expect False    
+(or 4 #t (/ 1 0))
+; expect 4   
 ;;; Q15 -------------------------
 
 (cond ((= 4 3) 'lolno)
   ((> 4 1) 'yay!)
   (else 'youdunmessedup))
-; expect 'yay!
+; expect yay!
 
 (cond ((= 4 0) 'incorrect)
   ((= 5 5))
@@ -157,8 +187,7 @@ lol
   ('coldtoes))
 ; expect coldtoes
 
-;;;Case where both is false (Why does this return 3?)
-scm> (cond ((= 4 3))
+(cond ((= 4 3))
                 (= 5 3))
 ; expect 3
 
@@ -207,7 +236,6 @@ scm> (cond ((= 4 3))
 (g 3 7)
 ; expect 13
 
-;;;;;;;;;;;;;Because mu is not defined on stk, check the expected value of these test for me;;;;;;;;;;;;;;;;;;
 (define moose (mu () x))
 ;expect moose
 (define (test3 f x) (f))
@@ -256,14 +284,13 @@ scm> (cond ((= 4 3))
 (define (test f y)
 (define x 10)(f y))
 ; expect test
-(test lamb2 2)         ; x becomes 5 in the lambda expression
+(test lamb2 2)         
 ; expect 7
-(test moose2 2)       ; x becomes 10 in the mu expression
+(test moose2 2) 
 ; expect 12
 
  
-
-<<ADD TESTS>>
+;;; (exit)
 
 ;;; These are examples from several sections of "The Structure
 ;;; and Interpretation of Computer Programs" by Abelson and Sussman.
