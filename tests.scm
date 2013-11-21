@@ -862,7 +862,7 @@ one-through-four
 ;;; Extra credit ;;;
 ;;;;;;;;;;;;;;;;;;;;
 
-(exit)
+
 
 ; Tail call optimization test
 (define (sum n total)
@@ -870,3 +870,4 @@ one-through-four
     (sum (- n 1) (+ n total))))
 (sum 1001 0)
 ; expect 501501
+(exit)

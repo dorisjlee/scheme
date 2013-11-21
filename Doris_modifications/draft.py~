@@ -34,13 +34,3 @@ def scm_to_py(lst):
 		return []
 	for ele in lst:
 		return [lst.first]+scm_to_py(lst.second)
-
-
-
-        #Create a new Frame, with all formal parameters bound to their argument values.
-        #Evaluate the body of procedure in the environment represented by this new frame.
-        #Return the value of calling procedure.
-        #new_fr=Frame(env)
-        #new_fr.bindings=args
-        # make_call_frame returns a new frame with parent as self and bound formals to args
-

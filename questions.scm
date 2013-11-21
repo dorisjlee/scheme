@@ -63,7 +63,6 @@
 (merge greater-list '((3 2 1) (1 1) (0)) '((4 0) (3 2 0) (3 2) (1)))
 ; expect ((4 0) (3 2 1) (3 2 0) (3 2) (1 1) (1) (0))
 
-(define (flatten x) (x))
 ; Problem 19
 
 ;; A list of all ways to partition TOTAL, where  each partition must
@@ -71,15 +70,15 @@
 (define (list-partitions total max-pieces max-value)
   (define (partition total max-value)
     (cond
-      ((= total 0) '(0 0))
-      ((< total 0) nil)
-      ((= max-value 0) nil)
-      ((> max-value total) nil)
+      ((= total 0) '(0 0)) ;correctly partitioned
+      ((< total 0) nil)  ;incorrect because too much partition
+      ((= max-value 0) nil) ;incorrect because there is no more number that I can use to partition n
+      ((> max-value total) nil) ;incorrect because you can not construct a smaller number using a bigger number 
       ((< max-value total)
         (begin
           (define with (partition (- total max-value) max-value))
           (define without (partition total (- max-value 1)))
-          (list (max-value with) (max-value without))
+          (list (list max-value with) (list max-value without))
         )
       )
     )
@@ -106,7 +105,7 @@
   )
 
   (define partitions (partition total max-value))
-  (filter (> (length partitions) max-pieces))
+  (filter (> (length partitions) max-pieces) partitions)
 )
 
 ; Problem 19 tests rely on correct Problem 18.
@@ -185,11 +184,3 @@
 
 (tree-sums tree)
 ; expect (20 19 13 16 11)
-
-
-; Problem 21 (optional)
-
-; Draw the hax image using turtle graphics.
-(define (hax d k)
-  ; *** YOUR CODE HERE ***
-  nil)
