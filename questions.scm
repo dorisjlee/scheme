@@ -1,4 +1,4 @@
-; #!scheme
+
 ; Some utility functions that you may find useful.
 (define nil '())
 (define (map proc items)
@@ -66,41 +66,34 @@
 
 ; Problem 19
 
+; def count_partitions(n, m):
+;  """Partition n into pieces no larger than m"""
+;   if n == 0:
+;     return 1
+;   elif n < 0:
+;     return 0
+;   elif m == 0:
+;     return 0
+;   else:
+;     with_m = count_partitions(n-m, m)
+;     without_m = count_partitions(n, m-1)
+;     return with_m + without_m
+
 ;; A list of all ways to partition TOTAL, where  each partition must
 ;; be at most MAX-VALUE and there are at most MAX-PIECES partitions.
 (define (list-partitions total max-pieces max-value)
-  (define (partition total max-value)
+  (define (partition tracker-list total max-pieces max-value)
     (cond
-      ((= total 0) nil)
-      ((< total 0) nil)
-      ((= max-value 0) nil)
-      ((< max-value total)
-        (begin
-          (define with (list max-value (- total max-value)))
-          ; (print 'TOTAL: )
-          ; (print total)
-          ; (print 'MAX-VALUE: )
-          ; (print max-value)
-          ; (newline)
-          ; (print 'WITH: )
-          ; (print with)
-          (append with (list max-value (partition (- total max-value) max-value)))
-          ; (newline)
-          ; (print 'NEWWITH: )
-          ; (print with)
-          (define without (list (partition total (- max-value 1))))
-          (list with without)
-        )
+      ((or (< max-pieces 1) (< max-value 1) (< total 0)) nil)
+      ((= total 0) (list tracker-list))
+      (else
+        (append (partition (append tracker-list (list max-value)) (- total max-value) (- max-pieces 1) max-value)
+                (partition tracker-list total max-pieces (- max-value 1)))
       )
     )
   )
 
-  (define (too-long seq)
-    (> (length seq) max-pieces)
-  )
-
-  (define partitions (partition total max-value))
-  (filter too-long partitions)
+  (partition nil total (+ 1 max-pieces) max-value)
 )
 
 ; Problem 19 tests rely on correct Problem 18.
