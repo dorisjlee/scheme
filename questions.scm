@@ -63,7 +63,7 @@
 (merge greater-list '((3 2 1) (1 1) (0)) '((4 0) (3 2 0) (3 2) (1)))
 ; expect ((4 0) (3 2 1) (3 2 0) (3 2) (1 1) (1) (0))
 
-(define (flatten x) (x))
+
 ; Problem 19
 
 ;; A list of all ways to partition TOTAL, where  each partition must
@@ -71,42 +71,36 @@
 (define (list-partitions total max-pieces max-value)
   (define (partition total max-value)
     (cond
-      ((= total 0) '(0 0))
+      ((= total 0) nil)
       ((< total 0) nil)
       ((= max-value 0) nil)
-      ((> max-value total) nil)
       ((< max-value total)
         (begin
-          (define with (partition (- total max-value) max-value))
-          (define without (partition total (- max-value 1)))
-          (list (max-value with) (max-value without))
+          (define with (list max-value (- total max-value)))
+          ; (print 'TOTAL: )
+          ; (print total)
+          ; (print 'MAX-VALUE: )
+          ; (print max-value)
+          ; (newline)
+          ; (print 'WITH: )
+          ; (print with)
+          (append with (list max-value (partition (- total max-value) max-value)))
+          ; (newline)
+          ; (print 'NEWWITH: )
+          ; (print with)
+          (define without (list (partition total (- max-value 1))))
+          (list with without)
         )
       )
-    )
-  )
-  
-  (define (length list)
-    (if (null? list)
-      0
-      (+ 1 (length (cdr list)))
     )
   )
 
-  (define (filter pred list)
-    (cond
-      ((null? list) nil)
-      ((pred list) (filter pred (cdr list)))
-      (else
-        (begin
-          (define list (cdr list))
-          (filter pred (list))
-        )
-      )
-    )
+  (define (too-long seq)
+    (> (length seq) max-pieces)
   )
 
   (define partitions (partition total max-value))
-  (filter (> (length partitions) max-pieces))
+  (filter too-long partitions)
 )
 
 ; Problem 19 tests rely on correct Problem 18.
